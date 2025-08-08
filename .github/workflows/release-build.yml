@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-release:
+  build-desktop-and-android:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -36,17 +36,11 @@ jobs:
           chmod +x build.sh
           ./build.sh
 
-          # Initialize gomobile (it's now on the PATH and is the stable version)
-          gomobile init
-
-          # Build mobile binaries
+          # Build Android binary
           echo "Building for Android..."
           gomobile bind -target=android -androidapi 21 -o bin/go-socks5-proxy.aar ./mobile
 
-          echo "Building for iOS..."
-          gomobile bind -target=ios -o bin/go-socks5-proxy.xcframework ./mobile
-
-      - name: Create Release and Upload Binaries
+      - name: Upload Linux/Windows/Android Artifacts
         uses: softprops/action-gh-release@v1
         with:
           files: |
@@ -54,6 +48,35 @@ jobs:
             bin/go-socks5-proxy-windows-amd64.exe
             bin/go-socks5-proxy-darwin-amd64
             bin/go-socks5-proxy.aar
-            bin/go-socks5-proxy.xcframework
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.24'
+
+      - name: Setup Gomobile
+        run: |
+          go install golang.org/x/mobile/cmd/gomobile@latest
+          go get golang.org/x/mobile/bind
+          gomobile init
+          echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+
+      - name: Build iOS Framework
+        run: |
+          echo "Building for iOS..."
+          gomobile bind -target=ios -o bin/go-socks5-proxy.xcframework ./mobile
+
+      - name: Upload iOS Artifact
+        uses: softprops/action-gh-release@v1
+        with:
+          files: bin/go-socks5-proxy.xcframework
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
