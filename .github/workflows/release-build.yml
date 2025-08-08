@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 jobs:
   build-and-release:
@@ -23,8 +24,8 @@ jobs:
           chmod +x build.sh
           ./build.sh
 
-          # Install gomobile
-          go install golang.org/x/mobile/cmd/gomobile@latest
+          # Install a specific, stable version of gomobile
+          go install golang.org/x/mobile/cmd/gomobile@v0.0.0-20231025122059-cc0085328de2
           gomobile init
 
           # Build for Android
