@@ -1,0 +1,48 @@
+name: Release Binaries
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22'
+
+      - name: Build desktop and mobile binaries
+        run: |
+          # Build for desktop
+          chmod +x build.sh
+          ./build.sh
+
+          # Install gomobile
+          go install golang.org/x/mobile/cmd/gomobile@latest
+          gomobile init
+
+          # Build for Android
+          echo "Building for Android..."
+          gomobile bind -target=android -o bin/go-socks5-proxy.aar ./mobile
+
+          # Build for iOS
+          echo "Building for iOS..."
+          gomobile bind -target=ios -o bin/go-socks5-proxy.xcframework ./mobile
+
+      - name: Create Release and Upload Binaries
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            bin/go-socks5-proxy-linux-amd64
+            bin/go-socks5-proxy-windows-amd64.exe
+            bin/go-socks5-proxy-darwin-amd64
+            bin/go-socks5-proxy.aar
+            bin/go-socks5-proxy.xcframework
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
