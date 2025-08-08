@@ -16,7 +16,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.22'
+          go-version: '1.24'
 
       - name: Build desktop and mobile binaries
         run: |
@@ -24,21 +24,9 @@ jobs:
           chmod +x build.sh
           ./build.sh
 
-          # Install gomobile from source to ensure stability
-          echo "Cloning and installing gomobile..."
-          # Use a temporary directory to avoid conflicts
-          git clone https://go.googlesource.com/mobile /tmp/mobile
-          cd /tmp/mobile
-          # Checkout a known-stable commit
-          git checkout 3605b5857705
-          # Build and install from the local source
-          go install ./cmd/gomobile
-          # Add the Go bin directory to the PATH for subsequent steps
+          # Install gomobile
+          go install golang.org/x/mobile/cmd/gomobile@latest
           export PATH="$(go env GOPATH)/bin":$PATH
-          # Return to the original working directory
-          cd $GITHUB_WORKSPACE
-
-          # Initialize gomobile
           gomobile init
 
           # Build for Android
