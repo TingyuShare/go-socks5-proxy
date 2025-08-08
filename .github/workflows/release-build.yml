@@ -36,9 +36,13 @@ jobs:
           chmod +x build.sh
           ./build.sh
 
-          # Build Android binary
+          # Build Android binaries
           echo "Building for Android..."
+          # Build AAR library
           gomobile bind -target=android -androidapi 21 -o bin/go-socks5-proxy.aar ./mobile
+          # Build APK
+          mkdir -p android-project
+          gomobile build -target=android -androidapi 21 -o bin/go-socks5-proxy.apk ./mobile
 
       - name: Upload Linux/Windows/Android Artifacts
         uses: softprops/action-gh-release@v1
@@ -48,6 +52,7 @@ jobs:
             bin/go-socks5-proxy-windows-amd64.exe
             bin/go-socks5-proxy-darwin-amd64
             bin/go-socks5-proxy.aar
+            bin/go-socks5-proxy.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
