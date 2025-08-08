@@ -18,27 +18,45 @@ jobs:
         with:
           go-version: '1.24'
 
-      - name: Build desktop and mobile binaries
+      - name: Setup Android NDK
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r25c
+
+      - name: Setup Gomobile
         run: |
-          # Build for desktop
+          go install golang.org/x/mobile/cmd/gomobile@latest
+          go get golang.org/x/mobile/bind
+          gomobile init
+          echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+
+      - name: Build All Binaries
+        run: |
+          # Build desktop binaries
           chmod +x build.sh
           ./build.sh
 
-          # Install the latest gomobile
-          go install golang.org/x/mobile/cmd/gomobile@latest
-          echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+          # Initialize gomobile (it's now on the PATH and is the stable version)
           gomobile init
 
-          # Build for Android
+          # Build mobile binaries
           echo "Building for Android..."
           gomobile bind -target=android -androidapi 21 -o bin/go-socks5-proxy.aar ./mobile
 
-          # Build for iOS
           echo "Building for iOS..."
           gomobile bind -target=ios -o bin/go-socks5-proxy.xcframework ./mobile
 
       - name: Create Release and Upload Binaries
         uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            bin/go-socks5-proxy-linux-amd64
+            bin/go-socks5-proxy-windows-amd64.exe
+            bin/go-socks5-proxy-darwin-amd64
+            bin/go-socks5-proxy.aar
+            bin/go-socks5-proxy.xcframework
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: |
             bin/go-socks5-proxy-linux-amd64
