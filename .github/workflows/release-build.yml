@@ -25,7 +25,7 @@ jobs:
           ./build.sh
 
           # Install a specific, stable version of gomobile
-          go install golang.org/x/mobile/cmd/gomobile@v0.0.0-20231025122059-cc0085328de2
+          go install golang.org/x/mobile/cmd/gomobile@v0.0.0-20230811143924-3605b5857705
           gomobile init
 
           # Build for Android
