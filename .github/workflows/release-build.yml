@@ -57,12 +57,3 @@ jobs:
             bin/go-socks5-proxy.xcframework
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          files: |
-            bin/go-socks5-proxy-linux-amd64
-            bin/go-socks5-proxy-windows-amd64.exe
-            bin/go-socks5-proxy-darwin-amd64
-            bin/go-socks5-proxy.aar
-            bin/go-socks5-proxy.xcframework
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
