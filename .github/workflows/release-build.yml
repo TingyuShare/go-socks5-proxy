@@ -24,8 +24,21 @@ jobs:
           chmod +x build.sh
           ./build.sh
 
-          # Install a specific, stable version of gomobile
-          go install golang.org/x/mobile/cmd/gomobile@v0.0.0-20230811143924-3605b5857705
+          # Install gomobile from source to ensure stability
+          echo "Cloning and installing gomobile..."
+          # Use a temporary directory to avoid conflicts
+          git clone https://go.googlesource.com/mobile /tmp/mobile
+          cd /tmp/mobile
+          # Checkout a known-stable commit
+          git checkout 3605b5857705
+          # Build and install from the local source
+          go install ./cmd/gomobile
+          # Add the Go bin directory to the PATH for subsequent steps
+          export PATH="$(go env GOPATH)/bin":$PATH
+          # Return to the original working directory
+          cd $GITHUB_WORKSPACE
+
+          # Initialize gomobile
           gomobile init
 
           # Build for Android
