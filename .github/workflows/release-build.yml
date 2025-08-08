@@ -73,10 +73,15 @@ jobs:
         run: |
           echo "Building for iOS..."
           gomobile bind -target=ios -o bin/go-socks5-proxy.xcframework ./mobile
+          
+      - name: Package iOS Framework
+        run: |
+          cd bin
+          zip -r go-socks5-proxy.xcframework.zip go-socks5-proxy.xcframework
 
       - name: Upload iOS Artifact
         uses: softprops/action-gh-release@v1
         with:
-          files: bin/go-socks5-proxy.xcframework
+          files: bin/go-socks5-proxy.xcframework.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
