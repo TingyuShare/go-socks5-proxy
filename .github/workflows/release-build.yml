@@ -29,7 +29,7 @@ jobs:
 
           # Build for Android
           echo "Building for Android..."
-          gomobile bind -target=android -o bin/go-socks5-proxy.aar ./mobile
+          gomobile bind -target=android -androidapi 21 -o bin/go-socks5-proxy.aar ./mobile
 
           # Build for iOS
           echo "Building for iOS..."
