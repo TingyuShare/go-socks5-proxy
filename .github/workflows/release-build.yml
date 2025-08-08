@@ -25,7 +25,7 @@ jobs:
           git clone https://github.com/golang/mobile.git /tmp/mobile
           cd /tmp/mobile
           # Check out a known-good commit hash before the breaking changes
-          git checkout 3605b5857705
+          git checkout master
           # Build and install gomobile from the checked-out source
           go install ./cmd/gomobile
           # Add the Go bin directory to the PATH for subsequent steps
